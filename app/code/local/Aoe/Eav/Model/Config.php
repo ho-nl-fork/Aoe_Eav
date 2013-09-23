@@ -72,9 +72,7 @@ class Aoe_Eav_Model_Config extends Mage_Eav_Model_Config
      */
     protected function _saveDataToCache($cacheId, $data)
     {
-        if ($this->_isCacheEnabled()) {
-            Mage::app()->saveCache($data, $cacheId, array(self::CACHE_TAG, Mage_Eav_Model_Entity_Attribute::CACHE_TAG));
-        }
+        Mage::app()->saveCache($data, $cacheId, array(self::CACHE_TAG, Mage_Eav_Model_Entity_Attribute::CACHE_TAG));
     }
 
     /**
@@ -174,14 +172,16 @@ class Aoe_Eav_Model_Config extends Mage_Eav_Model_Config
             }
         }
 
-        $this->_saveDataToCache(self::ATTRIBUTES_CACHE_ID,
-            serialize(array($this->_attributeSets, $this->_attributes, $this->_references['attribute']))
-        );
-        // save entities types to cache because they are fully set now
-        // (we've just added attribute_codes to each entity type object)
-        $this->_saveDataToCache(self::ENTITIES_CACHE_ID,
-            serialize(array($this->_entityTypes, $this->_references['entity']))
-        );
+        if ($this->_isCacheEnabled()) {
+            $this->_saveDataToCache(self::ATTRIBUTES_CACHE_ID,
+                serialize(array($this->_attributeSets, $this->_attributes, $this->_references['attribute']))
+            );
+            // save entities types to cache because they are fully set now
+            // (we've just added attribute_codes to each entity type object)
+            $this->_saveDataToCache(self::ENTITIES_CACHE_ID,
+                serialize(array($this->_entityTypes, $this->_references['entity']))
+            );
+        }
 
         Varien_Profiler::stop('EAV: ' . __METHOD__);
 
